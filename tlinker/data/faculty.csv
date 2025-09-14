@@ -1,0 +1,6 @@
+id,name,skills,availability,max_load
+1,Dr. Smith,"[""Computer Science"", ""Algorithms"", ""Data Structures""]","[""Mon:1-8"", ""Tue:1-8"", ""Wed:1-8"", ""Thu:1-8"", ""Fri:1-8""]",40
+2,Prof. Johnson,"[""Mathematics"", ""Calculus"", ""Linear Algebra""]","[""Mon:1-6"", ""Tue:1-6"", ""Wed:1-6"", ""Thu:1-6"", ""Fri:1-6""]",30
+3,Dr. Brown,"[""Electronics"", ""Circuit Design"", ""Digital Systems""]","[""Mon:2-8"", ""Tue:2-8"", ""Wed:2-8"", ""Thu:2-8"", ""Fri:2-8""]",35
+4,Prof. Davis,"[""Physics"", ""Mechanics"", ""Thermodynamics""]","[""Mon:1-4"", ""Tue:1-4"", ""Wed:1-4"", ""Thu:1-4"", ""Fri:1-4""]",25
+5,Dr. Wilson,"[""Computer Science"", ""Software Engineering"", ""Database Systems""]","[""Mon:3-8"", ""Tue:3-8"", ""Wed:3-8"", ""Thu:3-8"", ""Fri:3-8""]",40

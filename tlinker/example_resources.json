@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Lecture Hall A",
+    "capacity": 100,
+    "type": "Lecture Hall",
+    "availability": ["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]
+  },
+  {
+    "id": 2,
+    "name": "Lecture Hall B",
+    "capacity": 80,
+    "type": "Lecture Hall",
+    "availability": ["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]
+  },
+  {
+    "id": 3,
+    "name": "Computer Lab 1",
+    "capacity": 30,
+    "type": "Computer Lab",
+    "availability": ["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]
+  },
+  {
+    "id": 4,
+    "name": "Physics Lab",
+    "capacity": 25,
+    "type": "Physics Lab",
+    "availability": ["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]
+  },
+  {
+    "id": 5,
+    "name": "Classroom 101",
+    "capacity": 40,
+    "type": "Classroom",
+    "availability": ["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]
+  }
+]

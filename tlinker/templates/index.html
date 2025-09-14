@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vicharak - NEP-2020 Timetable Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tab-content {
+            min-height: 500px;
+        }
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(5, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+            border: 1px solid #ddd;
+        }
+        .calendar-cell {
+            background-color: white;
+            padding: 5px;
+            min-height: 40px;
+            border: 1px solid #ddd;
+        }
+        .calendar-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
+        }
+        .course-block {
+            background-color: #007bff;
+            color: white;
+            padding: 2px;
+            margin: 1px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+        .time-slot {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .table tbody tr.selected {
+            background-color: #e3f2fd !important;
+        }
+        .table tbody tr.selected:hover {
+            background-color: #bbdefb !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-calendar-alt"></i> Vicharak - NEP-2020 Timetable Generator
+            </span>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab">
+                    <i class="fas fa-user-graduate"></i> Students
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="faculty-tab" data-bs-toggle="tab" data-bs-target="#faculty" type="button" role="tab">
+                    <i class="fas fa-chalkboard-teacher"></i> Faculty
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses" type="button" role="tab">
+                    <i class="fas fa-book"></i> Courses
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab">
+                    <i class="fas fa-building"></i> Resources
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="generate-tab" data-bs-toggle="tab" data-bs-target="#generate" type="button" role="tab">
+                    <i class="fas fa-cogs"></i> Generate Timetable
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mainTabContent">
+            <!-- Students Tab -->
+            <div class="tab-pane fade show active" id="students" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-graduate"></i> Student Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="studentsFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('students', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('studentsFile').click()">
+                                <i class="fas fa-upload"></i> Load CSV/JSON
+                            </button>
+                            <button class="btn btn-success" onclick="saveData('students')">
+                                <i class="fas fa-download"></i> Save CSV/JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('students')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('students')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="studentsTable">
+                                <thead class="table-dark">
+                                    <tr id="studentsHeader"></tr>
+                                </thead>
+                                <tbody id="studentsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Tab -->
+            <div class="tab-pane fade" id="faculty" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chalkboard-teacher"></i> Faculty Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="facultyFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('faculty', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('facultyFile').click()">
+                                <i class="fas fa-upload"></i> Load CSV/JSON
+                            </button>
+                            <button class="btn btn-success" onclick="saveData('faculty')">
+                                <i class="fas fa-download"></i> Save CSV/JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('faculty')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('faculty')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="facultyTable">
+                                <thead class="table-dark">
+                                    <tr id="facultyHeader"></tr>
+                                </thead>
+                                <tbody id="facultyBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Tab -->
+            <div class="tab-pane fade" id="courses" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-book"></i> Course Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="coursesFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('courses', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('coursesFile').click()">
+                                <i class="fas fa-upload"></i> Load CSV/JSON
+                            </button>
+                            <button class="btn btn-success" onclick="saveData('courses')">
+                                <i class="fas fa-download"></i> Save CSV/JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('courses')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('courses')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="coursesTable">
+                                <thead class="table-dark">
+                                    <tr id="coursesHeader"></tr>
+                                </thead>
+                                <tbody id="coursesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Tab -->
+            <div class="tab-pane fade" id="resources" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-building"></i> Room Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="roomsFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('rooms', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('roomsFile').click()">
+                                <i class="fas fa-upload"></i> Load CSV/JSON
+                            </button>
+                            <button class="btn btn-success" onclick="saveData('rooms')">
+                                <i class="fas fa-download"></i> Save CSV/JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('rooms')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('rooms')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="roomsTable">
+                                <thead class="table-dark">
+                                    <tr id="roomsHeader"></tr>
+                                </thead>
+                                <tbody id="roomsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Timetable Tab -->
+            <div class="tab-pane fade" id="generate" role="tabpanel">
+                <div class="row mt-3">
+                    <!-- Left Panel - Course Selection -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-plus-circle"></i> Course Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Student:</label>
+                                    <select class="form-select" id="studentSelect">
+                                        <option value="">Select Student</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Course:</label>
+                                    <select class="form-select" id="courseSelect">
+                                        <option value="">Select Course</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Section:</label>
+                                    <select class="form-select" id="sectionSelect">
+                                        <option value="A">A</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Faculty (Optional):</label>
+                                    <select class="form-select" id="facultySelect">
+                                        <option value="">Any Faculty</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button class="btn btn-primary" onclick="addSelection()">
+                                        <i class="fas fa-plus"></i> Add Selection
+                                    </button>
+                                    <button class="btn btn-warning" onclick="clearSelections()">
+                                        <i class="fas fa-trash"></i> Clear All
+                                    </button>
+                                </div>
+                                
+                                <h6>Current Selections:</h6>
+                                <div class="table-container">
+                                    <table class="table table-sm" id="selectionsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Student</th>
+                                                <th>Course</th>
+                                                <th>Section</th>
+                                                <th>Faculty</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="selectionsBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel - Results -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-calendar-check"></i> Timetable Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button class="btn btn-success" onclick="generateTimetable()">
+                                        <i class="fas fa-cogs"></i> Generate Timetable
+                                    </button>
+                                    <button class="btn btn-info" onclick="exportTimetable('csv')">
+                                        <i class="fas fa-file-csv"></i> Export CSV
+                                    </button>
+                                    <button class="btn btn-success" onclick="exportTimetable('excel')">
+                                        <i class="fas fa-file-excel"></i> Export Excel
+                                    </button>
+                                </div>
+                                
+                                <h6>Generated Timetable:</h6>
+                                <div class="table-container">
+                                    <table class="table table-striped" id="timetableTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Course</th>
+                                                <th>Faculty</th>
+                                                <th>Room</th>
+                                                <th>Day</th>
+                                                <th>Start Time</th>
+                                                <th>End Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="timetableBody"></tbody>
+                                    </table>
+                                </div>
+                                
+                                <h6 class="mt-4">Calendar View:</h6>
+                                <div id="calendarView" class="calendar-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentData = {
+            students: [],
+            faculty: [],
+            courses: [],
+            rooms: []
+        };
+        let selections = [];
+        let timetable = [];
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+        });
+
+        // Load all data
+        async function loadAllData() {
+            const dataTypes = ['students', 'faculty', 'courses', 'rooms'];
+            for (const type of dataTypes) {
+                await loadData(type);
+            }
+            updateSelectors();
+        }
+
+        // Load data for a specific type
+        async function loadData(type) {
+            try {
+                const response = await fetch(`/api/data/${type}`);
+                const data = await response.json();
+                currentData[type] = data;
+                displayData(type, data);
+                if (type === 'students' || type === 'courses' || type === 'faculty') {
+                    updateSelectors();
+                }
+            } catch (error) {
+                console.error(`Error loading ${type} data:`, error);
+                alert(`Error loading ${type} data`);
+            }
+        }
+
+        // Upload file for a specific type
+        async function uploadFile(type, fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`/api/upload/${type}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    await loadData(type);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error(`Error uploading ${type} file:`, error);
+                alert(`Error uploading ${type} file`);
+            }
+            
+            // Clear the file input
+            fileInput.value = '';
+        }
+
+        // Add row to a specific type
+        async function addRow(type) {
+            try {
+                const response = await fetch(`/api/add_row/${type}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    await loadData(type);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error(`Error adding row to ${type}:`, error);
+                alert(`Error adding row to ${type}`);
+            }
+        }
+
+        // Remove selected row
+        async function removeRow(type) {
+            const table = document.getElementById(`${type}Table`);
+            const selectedRow = table.querySelector('tr.selected');
+            
+            if (!selectedRow) {
+                alert('Please select a row to remove');
+                return;
+            }
+            
+            const rowIndex = Array.from(table.querySelectorAll('tbody tr')).indexOf(selectedRow);
+            
+            try {
+                const response = await fetch(`/api/remove_row/${type}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({index: rowIndex})
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    await loadData(type);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error(`Error removing row from ${type}:`, error);
+                alert(`Error removing row from ${type}`);
+            }
+        }
+
+        // Display data in table
+        function displayData(type, data) {
+            const tableId = `${type}Table`;
+            const headerId = `${type}Header`;
+            const bodyId = `${type}Body`;
+            
+            const table = document.getElementById(tableId);
+            const header = document.getElementById(headerId);
+            const body = document.getElementById(bodyId);
+            
+            if (data.length === 0) {
+                header.innerHTML = '<th>No data available</th>';
+                body.innerHTML = '<tr><td colspan="100%">No data available</td></tr>';
+                return;
+            }
+            
+            // Create header
+            const columns = Object.keys(data[0]);
+            header.innerHTML = columns.map(col => `<th>${col}</th>`).join('');
+            
+            // Create rows with click handlers
+            body.innerHTML = data.map((row, index) => 
+                `<tr onclick="selectRow(this, '${type}')" style="cursor: pointer;">${columns.map(col => `<td>${formatCellValue(row[col])}</td>`).join('')}</tr>`
+            ).join('');
+        }
+
+        // Format cell value for display
+        function formatCellValue(value) {
+            if (Array.isArray(value)) {
+                return value.join(', ');
+            } else if (typeof value === 'object' && value !== null) {
+                return JSON.stringify(value);
+            }
+            return value;
+        }
+
+        // Select row for editing/removal
+        function selectRow(row, type) {
+            // Remove previous selection
+            const table = document.getElementById(`${type}Table`);
+            const previousSelected = table.querySelector('tr.selected');
+            if (previousSelected) {
+                previousSelected.classList.remove('selected');
+            }
+            
+            // Add selection to clicked row
+            row.classList.add('selected');
+            row.style.backgroundColor = '#e3f2fd';
+        }
+
+        // Update selectors
+        function updateSelectors() {
+            // Update student selector
+            const studentSelect = document.getElementById('studentSelect');
+            studentSelect.innerHTML = '<option value="">Select Student</option>' +
+                currentData.students.map(s => 
+                    `<option value="${s.id}">${s.id} - ${s.name}</option>`
+                ).join('');
+            
+            // Update course selector
+            const courseSelect = document.getElementById('courseSelect');
+            courseSelect.innerHTML = '<option value="">Select Course</option>' +
+                currentData.courses.map(c => 
+                    `<option value="${c.code}">${c.code} - ${c.name}</option>`
+                ).join('');
+            
+            // Update faculty selector
+            const facultySelect = document.getElementById('facultySelect');
+            facultySelect.innerHTML = '<option value="">Any Faculty</option>' +
+                currentData.faculty.map(f => 
+                    `<option value="${f.id}">${f.id} - ${f.name}</option>`
+                ).join('');
+        }
+
+        // Add course selection
+        function addSelection() {
+            const studentId = document.getElementById('studentSelect').value;
+            const courseCode = document.getElementById('courseSelect').value;
+            const section = document.getElementById('sectionSelect').value;
+            const facultyId = document.getElementById('facultySelect').value;
+            
+            if (!studentId || !courseCode) {
+                alert('Please select both student and course');
+                return;
+            }
+            
+            const selection = {
+                student_id: parseInt(studentId),
+                course_code: courseCode,
+                section: section,
+                faculty_id: facultyId ? parseInt(facultyId) : null
+            };
+            
+            selections.push(selection);
+            updateSelectionsDisplay();
+        }
+
+        // Update selections display
+        function updateSelectionsDisplay() {
+            const body = document.getElementById('selectionsBody');
+            body.innerHTML = selections.map(sel => {
+                const student = currentData.students.find(s => s.id === sel.student_id);
+                const course = currentData.courses.find(c => c.code === sel.course_code);
+                const faculty = sel.faculty_id ? currentData.faculty.find(f => f.id === sel.faculty_id) : null;
+                
+                return `<tr>
+                    <td>${student ? student.name : 'Unknown'}</td>
+                    <td>${course ? course.name : 'Unknown'}</td>
+                    <td>${sel.section}</td>
+                    <td>${faculty ? faculty.name : 'Any'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Clear selections
+        function clearSelections() {
+            selections = [];
+            updateSelectionsDisplay();
+        }
+
+        // Generate timetable
+        async function generateTimetable() {
+            if (selections.length === 0) {
+                alert('Please add some course selections first');
+                return;
+            }
+            
+            try {
+                // Send selections to server
+                await fetch('/api/selections', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({action: 'clear'})
+                });
+                
+                for (const selection of selections) {
+                    await fetch('/api/selections', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({action: 'add', ...selection})
+                    });
+                }
+                
+                // Generate timetable
+                const response = await fetch('/api/generate', {method: 'POST'});
+                const result = await response.json();
+                
+                if (result.success) {
+                    timetable = result.timetable;
+                    displayTimetable(timetable);
+                    displayCalendar(timetable);
+                } else {
+                    alert('Error generating timetable: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error generating timetable:', error);
+                alert('Error generating timetable');
+            }
+        }
+
+        // Display timetable
+        function displayTimetable(data) {
+            const body = document.getElementById('timetableBody');
+            body.innerHTML = data.map(row => 
+                `<tr>
+                    <td>${row.course}</td>
+                    <td>${row.faculty}</td>
+                    <td>${row.room}</td>
+                    <td>${row.day}</td>
+                    <td>${row.start_time}</td>
+                    <td>${row.end_time}</td>
+                </tr>`
+            ).join('');
+        }
+
+        // Display calendar
+        function displayCalendar(data) {
+            const calendar = document.getElementById('calendarView');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            const slots = 16; // 8 AM to 4 PM, 30-min slots
+            
+            // Create grid
+            let html = '<div class="calendar-cell calendar-header time-slot">Time</div>';
+            days.forEach(day => {
+                html += `<div class="calendar-cell calendar-header">${day}</div>`;
+            });
+            
+            for (let slot = 0; slot < slots; slot++) {
+                const time = `${8 + slot * 0.5}:${(slot * 0.5) % 1 === 0 ? '00' : '30'}`;
+                html += `<div class="calendar-cell time-slot">${time}</div>`;
+                
+                days.forEach(day => {
+                    const courses = data.filter(c => c.day === day && c.start <= slot && c.end >= slot);
+                    let cellContent = '';
+                    courses.forEach(course => {
+                        cellContent += `<div class="course-block">${course.course}<br/>${course.room}</div>`;
+                    });
+                    html += `<div class="calendar-cell">${cellContent}</div>`;
+                });
+            }
+            
+            calendar.innerHTML = html;
+        }
+
+        // Export timetable
+        function exportTimetable(format) {
+            if (timetable.length === 0) {
+                alert('No timetable to export. Generate a timetable first.');
+                return;
+            }
+            
+            window.open(`/api/export/${format}`, '_blank');
+        }
+
+        // Save data
+        function saveData(type) {
+            const data = currentData[type];
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${type}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Add row (placeholder)
+        function addRow(type) {
+            alert('Add row functionality not implemented in web version. Use the desktop app for full editing capabilities.');
+        }
+    </script>
+</body>
+</html>

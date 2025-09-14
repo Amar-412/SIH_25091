@@ -1,0 +1,12 @@
+{
+  "days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  "slots_per_day": 16,
+  "slot_minutes": 30,
+  "time_limit_sec": 30,
+  "soft_weights": {
+    "prefer_morning": 1.0,
+    "prefer_afternoon": 0.5,
+    "avoid_gaps": 2.0,
+    "room_capacity_utilization": 1.5
+  }
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "code": "CS301",
+    "name": "Data Structures",
+    "type": "Major",
+    "credits": 4,
+    "T_hours": 3,
+    "P_hours": 2,
+    "program": "Computer Science",
+    "semester": 3,
+    "section": "A",
+    "duration_slots": 6,
+    "room_type": "Lecture Hall",
+    "allowed_days": [0, 1, 2, 3, 4],
+    "allowed_start_slots": [1, 3, 5, 7, 9],
+    "faculty_pool": [1, 5]
+  },
+  {
+    "code": "CS302",
+    "name": "Algorithms",
+    "type": "Major",
+    "credits": 4,
+    "T_hours": 3,
+    "P_hours": 2,
+    "program": "Computer Science",
+    "semester": 3,
+    "section": "A",
+    "duration_slots": 6,
+    "room_type": "Lecture Hall",
+    "allowed_days": [0, 1, 2, 3, 4],
+    "allowed_start_slots": [1, 3, 5, 7, 9],
+    "faculty_pool": [1, 5]
+  },
+  {
+    "code": "MATH201",
+    "name": "Calculus III",
+    "type": "Major",
+    "credits": 4,
+    "T_hours": 3,
+    "P_hours": 1,
+    "program": "Computer Science",
+       
+    "semester": 3,
+    "section": "A",
+    "duration_slots": 4,
+    "room_type": "Lecture Hall",
+    "allowed_days": [0, 1, 2, 3, 4],
+    "allowed_start_slots": [1, 3, 5, 7],
+    "faculty_pool": [2]
+  },
+  {
+    "code": "ENG101",
+    "name": "Technical Writing",
+    "type": "Skill",
+    "credits": 2,
+    "T_hours": 2,
+    "P_hours": 0,
+    "program": "Computer Science",
+    "semester": 1,
+    "section": "A",
+    "duration_slots": 2,
+    "room_type": "Classroom",
+    "allowed_days": [0, 1, 2, 3, 4],
+    "allowed_start_slots": [1, 3, 5, 7],
+    "faculty_pool": [1, 2, 3, 4, 5]
+  }
+]

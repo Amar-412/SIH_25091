@@ -1,0 +1,6 @@
+id,name,program,semester,chosen_courses,credits_target
+1,John Doe,Computer Science,3,"[""CS301"", ""CS302"", ""MATH201""]",18
+2,Jane Smith,Computer Science,3,"[""CS301"", ""CS303"", ""PHYS101""]",18
+3,Bob Johnson,Electronics,5,"[""EE401"", ""EE402"", ""MATH301""]",20
+4,Alice Brown,Computer Science,1,"[""CS101"", ""MATH101"", ""ENG101""]",16
+5,Charlie Wilson,Electronics,5,"[""EE401"", ""EE403"", ""CS201""]",20

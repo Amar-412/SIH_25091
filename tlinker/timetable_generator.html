@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vicharak - NEP-2020 Timetable Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --dark-bg: #34495e;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: var(--gradient-primary) !important;
+            box-shadow: var(--shadow);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .nav-tabs {
+            border: none;
+            background: white;
+            border-radius: 15px 15px 0 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 0;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 15px 15px 0 0;
+            margin-right: 5px;
+            padding: 15px 25px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-tabs .nav-link i {
+            margin-right: 8px;
+            font-size: 1.1em;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: var(--shadow);
+            min-height: 600px;
+            padding: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .btn {
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.6);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(149, 165, 166, 0.6);
+        }
+
+        .table-container {
+            max-height: 450px;
+            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            margin-bottom: 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: scale(1.01);
+        }
+
+        .table tbody tr.selected {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+            box-shadow: inset 0 0 0 2px var(--secondary-color);
+        }
+
+        .table tbody tr.selected:hover {
+            background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%) !important;
+        }
+
+        .table tbody td {
+            padding: 12px 15px;
+            border: none;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .form-select, .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 120px repeat(6, 1fr);
+            grid-template-rows: auto repeat(5, 1fr);
+            gap: 2px;
+            background: var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-cell {
+            background: white;
+            padding: 8px;
+            min-height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .calendar-header {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .course-block {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .course-block:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .time-slot {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-dark);
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem !important;
+        }
+
+        .mt-4 {
+            margin-top: 2rem !important;
+        }
+
+        .p-3 {
+            padding: 1.5rem !important;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+        }
+
+        /* Custom scrollbar */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 10px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: 80px repeat(6, 1fr);
+                gap: 1px;
+            }
+            
+            .calendar-cell {
+                min-height: 40px;
+                padding: 4px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animation for page load */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-calendar-alt"></i> Vicharak 
+            </span>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-graduation-cap me-2"></i>Academic Excellence
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <!-- Professional Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <h2 class="card-title mb-3">
+                            <i class="fas fa-university text-primary me-3"></i>
+                            Academic Timetable Management System
+                        </h2>
+                        <p class="card-text text-muted mb-0">
+                            Advanced scheduling solution with OR-Tools optimization and comprehensive academic management
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab">
+                    <i class="fas fa-user-graduate"></i> Students
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="faculty-tab" data-bs-toggle="tab" data-bs-target="#faculty" type="button" role="tab">
+                    <i class="fas fa-chalkboard-teacher"></i> Faculty
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses" type="button" role="tab">
+                    <i class="fas fa-book"></i> Courses
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab">
+                    <i class="fas fa-building"></i> Resources
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="generate-tab" data-bs-toggle="tab" data-bs-target="#generate" type="button" role="tab">
+                    <i class="fas fa-cogs"></i> Generate Timetable
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mainTabContent">
+            <!-- Students Tab -->
+            <div class="tab-pane fade show active" id="students" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-graduate"></i> Student Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="studentsFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('students', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('studentsFile').click()">
+                                <i class="fas fa-upload"></i> Upload CSV/JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadSampleData('students')">
+                                <i class="fas fa-download"></i> Load Sample Data
+                            </button>
+                            <button class="btn btn-success" onclick="exportData('students')">
+                                <i class="fas fa-download"></i> Export JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('students')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('students')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="studentsTable">
+                                <thead class="table-dark">
+                                    <tr id="studentsHeader"></tr>
+                                </thead>
+                                <tbody id="studentsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Tab -->
+            <div class="tab-pane fade" id="faculty" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chalkboard-teacher"></i> Faculty Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="facultyFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('faculty', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('facultyFile').click()">
+                                <i class="fas fa-upload"></i> Upload CSV/JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadSampleData('faculty')">
+                                <i class="fas fa-download"></i> Load Sample Data
+                            </button>
+                            <button class="btn btn-success" onclick="exportData('faculty')">
+                                <i class="fas fa-download"></i> Export JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('faculty')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('faculty')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="facultyTable">
+                                <thead class="table-dark">
+                                    <tr id="facultyHeader"></tr>
+                                </thead>
+                                <tbody id="facultyBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Tab -->
+            <div class="tab-pane fade" id="courses" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-book"></i> Course Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="coursesFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('courses', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('coursesFile').click()">
+                                <i class="fas fa-upload"></i> Upload CSV/JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadSampleData('courses')">
+                                <i class="fas fa-download"></i> Load Sample Data
+                            </button>
+                            <button class="btn btn-success" onclick="exportData('courses')">
+                                <i class="fas fa-download"></i> Export JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('courses')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('courses')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="coursesTable">
+                                <thead class="table-dark">
+                                    <tr id="coursesHeader"></tr>
+                                </thead>
+                                <tbody id="coursesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Tab -->
+            <div class="tab-pane fade" id="resources" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-building"></i> Room Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="file" id="roomsFile" accept=".csv,.json" style="display: none;" onchange="uploadFile('rooms', this)">
+                            <button class="btn btn-primary" onclick="document.getElementById('roomsFile').click()">
+                                <i class="fas fa-upload"></i> Upload CSV/JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadSampleData('rooms')">
+                                <i class="fas fa-download"></i> Load Sample Data
+                            </button>
+                            <button class="btn btn-success" onclick="exportData('rooms')">
+                                <i class="fas fa-download"></i> Export JSON
+                            </button>
+                            <button class="btn btn-info" onclick="addRow('rooms')">
+                                <i class="fas fa-plus"></i> Add Row
+                            </button>
+                            <button class="btn btn-danger" onclick="removeRow('rooms')">
+                                <i class="fas fa-trash"></i> Remove Selected
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table table-striped" id="roomsTable">
+                                <thead class="table-dark">
+                                    <tr id="roomsHeader"></tr>
+                                </thead>
+                                <tbody id="roomsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Timetable Tab -->
+            <div class="tab-pane fade" id="generate" role="tabpanel">
+                <div class="row mt-3">
+                    <!-- Left Panel - Course Selection -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-plus-circle"></i> Course Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Student:</label>
+                                    <select class="form-select" id="studentSelect">
+                                        <option value="">Select Student</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Course:</label>
+                                    <select class="form-select" id="courseSelect">
+                                        <option value="">Select Course</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Section:</label>
+                                    <select class="form-select" id="sectionSelect">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Faculty (Optional):</label>
+                                    <select class="form-select" id="facultySelect">
+                                        <option value="">Any Faculty</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button class="btn btn-primary" onclick="addSelection()">
+                                        <i class="fas fa-plus"></i> Add Selection
+                                    </button>
+                                    <button class="btn btn-warning" onclick="clearSelections()">
+                                        <i class="fas fa-trash"></i> Clear All
+                                    </button>
+                                </div>
+                                
+                                <h6>Current Selections:</h6>
+                                <div class="table-container">
+                                    <table class="table table-sm" id="selectionsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Student</th>
+                                                <th>Course</th>
+                                                <th>Section</th>
+                                                <th>Faculty</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="selectionsBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel - Results -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-calendar-check"></i> Timetable Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button class="btn btn-success" onclick="generateTimetable()">
+                                        <i class="fas fa-cogs"></i> Generate Timetable
+                                    </button>
+                                    <button class="btn btn-warning" onclick="debugData()">
+                                        <i class="fas fa-bug"></i> Debug Data
+                                    </button>
+                                    <button class="btn btn-info" onclick="exportTimetable('csv')">
+                                        <i class="fas fa-file-csv"></i> Export CSV
+                                    </button>
+                                    <button class="btn btn-success" onclick="exportTimetable('excel')">
+                                        <i class="fas fa-file-excel"></i> Export Excel
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="exportTimetable('json')">
+                                        <i class="fas fa-file-code"></i> Export JSON
+                                    </button>
+                                </div>
+                                
+                                <h6>Generated Timetable:</h6>
+                                <div class="table-container">
+                                    <table class="table table-striped" id="timetableTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Period</th>
+                                                <th>Course</th>
+                                                <th>Faculty</th>
+                                                <th>Room</th>
+                                                <th>Day</th>
+                                                <th>Start Time</th>
+                                                <th>End Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="timetableBody"></tbody>
+                                    </table>
+                                </div>
+                                
+                                <h6 class="mt-4">Calendar View:</h6>
+                                <div id="calendarView" class="calendar-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        // Sample data
+        const sampleData = {
+            students: [
+                {id: 1, name: "Alice Johnson", program: "Computer Science", semester: 3, chosen_courses: ["CS301", "CS302", "MATH201"], credits_target: 16},
+                {id: 2, name: "Bob Smith", program: "Computer Science", semester: 3, chosen_courses: ["CS301", "CS303", "PHYS101"], credits_target: 16},
+                {id: 3, name: "Carol Davis", program: "Electronics", semester: 5, chosen_courses: ["ECE401", "ECE402", "MATH301"], credits_target: 18},
+                {id: 4, name: "David Wilson", program: "Computer Science", semester: 3, chosen_courses: ["CS301", "CS304", "ENG101"], credits_target: 16},
+                {id: 5, name: "Eva Brown", program: "Electronics", semester: 5, chosen_courses: ["ECE401", "ECE403", "PHYS201"], credits_target: 18}
+            ],
+            faculty: [
+                {id: 1, name: "Dr. Sarah Miller", skills: ["Programming", "Algorithms"], availability: [["Mon:1-8", "Wed:1-8", "Fri:1-8"]], max_load: 30},
+                {id: 2, name: "Prof. John Anderson", skills: ["Mathematics", "Statistics"], availability: [["Mon:1-8", "Tue:1-8", "Thu:1-8"]], max_load: 30},
+                {id: 3, name: "Dr. Maria Garcia", skills: ["Electronics", "Circuits"], availability: [["Tue:1-8", "Wed:1-8", "Fri:1-8"]], max_load: 30},
+                {id: 4, name: "Prof. Robert Taylor", skills: ["Physics", "Mechanics"], availability: [["Mon:1-8", "Wed:1-8", "Thu:1-8"]], max_load: 30},
+                {id: 5, name: "Dr. Lisa Chen", skills: ["English", "Communication"], availability: [["Tue:1-8", "Thu:1-8", "Fri:1-8"]], max_load: 30}
+            ],
+            courses: [
+                {code: "CS301", name: "Data Structures", type: "Major", credits: 4, T_hours: 3, P_hours: 1, program: "Computer Science", semester: 3, section: "A", duration_slots: 4, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [1]},
+                {code: "CS302", name: "Database Systems", type: "Major", credits: 4, T_hours: 3, P_hours: 1, program: "Computer Science", semester: 3, section: "A", duration_slots: 4, room_type: "Computer Lab", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [1]},
+                {code: "CS303", name: "Software Engineering", type: "Major", credits: 3, T_hours: 2, P_hours: 1, program: "Computer Science", semester: 3, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [1]},
+                {code: "CS304", name: "Computer Networks", type: "Major", credits: 3, T_hours: 2, P_hours: 1, program: "Computer Science", semester: 3, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [1]},
+                {code: "MATH201", name: "Calculus III", type: "Minor", credits: 3, T_hours: 3, P_hours: 0, program: "Computer Science", semester: 3, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [2]},
+                {code: "MATH301", name: "Linear Algebra", type: "Minor", credits: 3, T_hours: 3, P_hours: 0, program: "Electronics", semester: 5, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [2]},
+                {code: "ECE401", name: "Digital Electronics", type: "Major", credits: 4, T_hours: 3, P_hours: 1, program: "Electronics", semester: 5, section: "A", duration_slots: 4, room_type: "Electronics Lab", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [3]},
+                {code: "ECE402", name: "Microprocessors", type: "Major", credits: 4, T_hours: 3, P_hours: 1, program: "Electronics", semester: 5, section: "A", duration_slots: 4, room_type: "Electronics Lab", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [3]},
+                {code: "ECE403", name: "Communication Systems", type: "Major", credits: 3, T_hours: 2, P_hours: 1, program: "Electronics", semester: 5, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [3]},
+                {code: "PHYS101", name: "Physics I", type: "Minor", credits: 3, T_hours: 3, P_hours: 0, program: "Computer Science", semester: 3, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [4]},
+                {code: "PHYS201", name: "Physics II", type: "Minor", credits: 3, T_hours: 3, P_hours: 0, program: "Electronics", semester: 5, section: "A", duration_slots: 3, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [4]},
+                {code: "ENG101", name: "Technical Writing", type: "Skill", credits: 2, T_hours: 2, P_hours: 0, program: "Computer Science", semester: 3, section: "A", duration_slots: 2, room_type: "Classroom", allowed_days: [0, 1, 2, 3, 4], allowed_start_slots: [1, 3, 5, 7], faculty_pool: [5]}
+            ],
+            rooms: [
+                {id: 1, name: "Room 101", capacity: 40, type: "Classroom", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 2, name: "Room 102", capacity: 40, type: "Classroom", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 3, name: "Computer Lab 1", capacity: 30, type: "Computer Lab", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 4, name: "Computer Lab 2", capacity: 30, type: "Computer Lab", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 5, name: "Electronics Lab 1", capacity: 25, type: "Electronics Lab", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 6, name: "Electronics Lab 2", capacity: 25, type: "Electronics Lab", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 7, name: "Lecture Hall A", capacity: 100, type: "Lecture Hall", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]},
+                {id: 8, name: "Lecture Hall B", capacity: 100, type: "Lecture Hall", availability: [["Mon:1-16", "Tue:1-16", "Wed:1-16", "Thu:1-16", "Fri:1-16"]]}
+            ]
+        };
+
+        // Global variables
+        let currentData = {
+            students: [],
+            faculty: [],
+            courses: [],
+            rooms: []
+        };
+        let selections = [];
+        let timetable = [];
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllSampleData();
+        });
+
+        // Load all sample data
+        function loadAllSampleData() {
+            Object.keys(sampleData).forEach(type => {
+                loadSampleData(type);
+            });
+        }
+
+        // Load sample data for a specific type
+        function loadSampleData(type) {
+            currentData[type] = [...sampleData[type]];
+            displayData(type, currentData[type]);
+            if (type === 'students' || type === 'courses' || type === 'faculty') {
+                updateSelectors();
+            }
+            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} sample data loaded successfully!`);
+        }
+
+        // Upload file for a specific type
+        function uploadFile(type, fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let data;
+                    if (file.name.endsWith('.json')) {
+                        const jsonData = JSON.parse(e.target.result);
+                        // Handle both array format and object format
+                        if (Array.isArray(jsonData)) {
+                            data = jsonData;
+                        } else if (typeof jsonData === 'object' && jsonData !== null) {
+                            // If it's an object, try to find the array
+                            const possibleKeys = [type, type + 's', 'data', 'items'];
+                            for (const key of possibleKeys) {
+                                if (Array.isArray(jsonData[key])) {
+                                    data = jsonData[key];
+                                    break;
+                                }
+                            }
+                            if (!data) {
+                                // If no array found, convert object to array
+                                data = [jsonData];
+                            }
+                        }
+                    } else if (file.name.endsWith('.csv')) {
+                        const csvText = e.target.result;
+                        const lines = csvText.split('\n').filter(line => line.trim());
+                        if (lines.length < 2) {
+                            alert('CSV file must have at least a header and one data row');
+                            return;
+                        }
+                        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                        data = lines.slice(1).filter(line => line.trim()).map(line => {
+                            const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                            const obj = {};
+                            headers.forEach((header, index) => {
+                                let value = values[index] || '';
+                                // Try to parse JSON arrays/objects
+                                if (value.startsWith('[') || value.startsWith('{')) {
+                                    try {
+                                        value = JSON.parse(value);
+                                    } catch (e) {
+                                        // Keep as string if parsing fails
+                                    }
+                                }
+                                obj[header] = value;
+                            });
+                            return obj;
+                        });
+                    } else {
+                        alert('Please upload a CSV or JSON file');
+                        return;
+                    }
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        alert('No valid data found in the file');
+                        return;
+                    }
+
+                    console.log(`Loaded ${type} data:`, data);
+                    currentData[type] = data;
+                    displayData(type, currentData[type]);
+                    if (type === 'students' || type === 'courses' || type === 'faculty') {
+                        updateSelectors();
+                    }
+                    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} data uploaded successfully! ${data.length} records loaded.`);
+                } catch (error) {
+                    console.error('Error reading file:', error);
+                    alert(`Error reading file: ${error.message}`);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Clear the file input
+            fileInput.value = '';
+        }
+
+        // Display data in table
+        function displayData(type, data) {
+            const tableId = `${type}Table`;
+            const headerId = `${type}Header`;
+            const bodyId = `${type}Body`;
+            
+            const table = document.getElementById(tableId);
+            const header = document.getElementById(headerId);
+            const body = document.getElementById(bodyId);
+            
+            if (data.length === 0) {
+                header.innerHTML = '<th>No data available</th>';
+                body.innerHTML = '<tr><td colspan="100%">No data available</td></tr>';
+                return;
+            }
+            
+            // Create header
+            const columns = Object.keys(data[0]);
+            header.innerHTML = columns.map(col => `<th>${col}</th>`).join('');
+            
+            // Create rows with click handlers
+            body.innerHTML = data.map((row, index) => 
+                `<tr onclick="selectRow(this, '${type}')" style="cursor: pointer;">${columns.map(col => `<td>${formatCellValue(row[col])}</td>`).join('')}</tr>`
+            ).join('');
+        }
+
+        // Format cell value for display
+        function formatCellValue(value) {
+            if (Array.isArray(value)) {
+                return value.join(', ');
+            } else if (typeof value === 'object' && value !== null) {
+                return JSON.stringify(value);
+            }
+            return value;
+        }
+
+        // Select row for editing/removal
+        function selectRow(row, type) {
+            // Remove previous selection
+            const table = document.getElementById(`${type}Table`);
+            const previousSelected = table.querySelector('tr.selected');
+            if (previousSelected) {
+                previousSelected.classList.remove('selected');
+            }
+            
+            // Add selection to clicked row
+            row.classList.add('selected');
+        }
+
+        // Update selectors
+        function updateSelectors() {
+            // Update student selector
+            const studentSelect = document.getElementById('studentSelect');
+            studentSelect.innerHTML = '<option value="">Select Student</option>' +
+                currentData.students.map(s => 
+                    `<option value="${s.id}">${s.id} - ${s.name}</option>`
+                ).join('');
+            
+            // Update course selector
+            const courseSelect = document.getElementById('courseSelect');
+            courseSelect.innerHTML = '<option value="">Select Course</option>' +
+                currentData.courses.map(c => 
+                    `<option value="${c.code}">${c.code} - ${c.name}</option>`
+                ).join('');
+            
+            // Update faculty selector
+            const facultySelect = document.getElementById('facultySelect');
+            facultySelect.innerHTML = '<option value="">Any Faculty</option>' +
+                currentData.faculty.map(f => 
+                    `<option value="${f.id}">${f.id} - ${f.name}</option>`
+                ).join('');
+        }
+
+        // Add course selection
+        function addSelection() {
+            const studentId = document.getElementById('studentSelect').value;
+            const courseCode = document.getElementById('courseSelect').value;
+            const section = document.getElementById('sectionSelect').value;
+            const facultyId = document.getElementById('facultySelect').value;
+            
+            if (!studentId || !courseCode) {
+                alert('Please select both student and course');
+                return;
+            }
+            
+            const selection = {
+                student_id: parseInt(studentId),
+                course_code: courseCode,
+                section: section,
+                faculty_id: facultyId ? parseInt(facultyId) : null
+            };
+            
+            selections.push(selection);
+            updateSelectionsDisplay();
+        }
+
+        // Update selections display
+        function updateSelectionsDisplay() {
+            const body = document.getElementById('selectionsBody');
+            body.innerHTML = selections.map(sel => {
+                const student = currentData.students.find(s => s.id === sel.student_id);
+                const course = currentData.courses.find(c => c.code === sel.course_code);
+                const faculty = sel.faculty_id ? currentData.faculty.find(f => f.id === sel.faculty_id) : null;
+                
+                return `<tr>
+                    <td>${student ? student.name : 'Unknown'}</td>
+                    <td>${course ? course.name : 'Unknown'}</td>
+                    <td>${sel.section}</td>
+                    <td>${faculty ? faculty.name : 'Any'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Clear selections
+        function clearSelections() {
+            selections = [];
+            updateSelectionsDisplay();
+        }
+
+        // Debug function to check data
+        function debugData() {
+            console.log('=== DEBUG DATA ===');
+            console.log('Students:', currentData.students);
+            console.log('Faculty:', currentData.faculty);
+            console.log('Courses:', currentData.courses);
+            console.log('Rooms:', currentData.rooms);
+            console.log('Selections:', selections);
+            
+            let debugInfo = '=== DEBUG INFORMATION ===\n\n';
+            debugInfo += `Students: ${currentData.students.length} records\n`;
+            debugInfo += `Faculty: ${currentData.faculty.length} records\n`;
+            debugInfo += `Courses: ${currentData.courses.length} records\n`;
+            debugInfo += `Rooms: ${currentData.rooms.length} records\n`;
+            debugInfo += `Selections: ${selections.length} records\n\n`;
+            
+            if (currentData.students.length > 0) {
+                debugInfo += `Sample Student: ${JSON.stringify(currentData.students[0], null, 2)}\n\n`;
+            }
+            if (currentData.courses.length > 0) {
+                debugInfo += `Sample Course: ${JSON.stringify(currentData.courses[0], null, 2)}\n\n`;
+            }
+            if (currentData.faculty.length > 0) {
+                debugInfo += `Sample Faculty: ${JSON.stringify(currentData.faculty[0], null, 2)}\n\n`;
+            }
+            if (currentData.rooms.length > 0) {
+                debugInfo += `Sample Room: ${JSON.stringify(currentData.rooms[0], null, 2)}\n\n`;
+            }
+            if (selections.length > 0) {
+                debugInfo += `Sample Selection: ${JSON.stringify(selections[0], null, 2)}\n\n`;
+            }
+            
+            alert(debugInfo);
+        }
+
+        // Simple timetable generation (simplified version)
+        function generateTimetable() {
+            if (selections.length === 0) {
+                alert('Please add some course selections first');
+                return;
+            }
+            
+            // Check if required data is loaded
+            if (currentData.students.length === 0 || currentData.courses.length === 0 || 
+                currentData.faculty.length === 0 || currentData.rooms.length === 0) {
+                alert('Please load all required data (Students, Courses, Faculty, Rooms) first');
+                return;
+            }
+            
+            // Class timings as per your specification
+            const classTimings = [
+                { period: 1, start: '7:10', end: '7:50' },
+                { period: 2, start: '7:50', end: '8:50' },
+                { period: 3, start: '9:20', end: '10:00' },
+                { period: 4, start: '10:10', end: '11:00' },
+                { period: 5, start: '11:10', end: '12:00' },
+                { period: 6, start: '12:10', end: '12:50' }
+            ];
+            
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            timetable = [];
+            let currentPeriod = 0;
+            let currentDay = 0;
+            let facultyIndex = 0; // Track faculty rotation
+            
+            // Track faculty assignments per day
+            const facultyDailyAssignments = {};
+            const facultyDailySubjects = {};
+            
+            console.log('Generating timetable for selections:', selections);
+            console.log('Available courses:', currentData.courses);
+            console.log('Available faculty:', currentData.faculty);
+            console.log('Available rooms:', currentData.rooms);
+            
+            selections.forEach((selection, index) => {
+                console.log(`Processing selection ${index + 1}:`, selection);
+                
+                const course = currentData.courses.find(c => c.code === selection.course_code);
+                console.log('Found course:', course);
+                
+                if (!course) {
+                    console.error(`Course not found: ${selection.course_code}`);
+                    return;
+                }
+                
+                let faculty;
+                if (selection.faculty_id) {
+                    faculty = currentData.faculty.find(f => f.id == selection.faculty_id);
+                    console.log('Using selected faculty:', faculty);
+                } else {
+                    // Simple rotation through available faculty for now
+                    console.log('Assigning faculty by rotation for course:', course.name);
+                    faculty = currentData.faculty[facultyIndex % currentData.faculty.length];
+                    console.log(`Assigned faculty ${facultyIndex + 1}/${currentData.faculty.length}:`, faculty.name);
+                    facultyIndex++;
+                }
+                console.log('Assigned faculty:', faculty);
+                
+                if (!faculty) {
+                    console.error('No faculty available');
+                    return;
+                }
+                
+                // Find room based on room type
+                const room = currentData.rooms.find(r => r.type === course.room_type) || currentData.rooms[0];
+                console.log('Assigned room:', room);
+                
+                if (!room) {
+                    console.error('No room available');
+                    return;
+                }
+                
+                const day = days[currentDay % days.length];
+                const period = classTimings[currentPeriod % classTimings.length];
+                
+                // Check faculty constraint: max 2 subjects per day
+                const facultyKey = faculty.name;
+                const dayKey = day;
+                
+                // Initialize tracking if not exists
+                if (!facultyDailyAssignments[facultyKey]) {
+                    facultyDailyAssignments[facultyKey] = {};
+                }
+                if (!facultyDailyAssignments[facultyKey][dayKey]) {
+                    facultyDailyAssignments[facultyKey][dayKey] = 0;
+                }
+                if (!facultyDailySubjects[facultyKey]) {
+                    facultyDailySubjects[facultyKey] = {};
+                }
+                if (!facultyDailySubjects[facultyKey][dayKey]) {
+                    facultyDailySubjects[facultyKey][dayKey] = new Set();
+                }
+                
+                // Check if faculty already has 2 subjects on this day
+                if (facultyDailyAssignments[facultyKey][dayKey] >= 2) {
+                    const existingSubjects = Array.from(facultyDailySubjects[facultyKey][dayKey]);
+                    alert(`❌ CONSTRAINT VIOLATION!\n\nFaculty "${faculty.name}" is already assigned to 2 subjects on ${day}:\n• ${existingSubjects.join('\n• ')}\n\nCannot assign "${course.name}" as it would exceed the maximum limit of 2 subjects per day per faculty.\n\nPlease modify your course selections or assign a different faculty member.`);
+                    console.error(`Faculty ${faculty.name} already has 2 subjects on ${day}:`, existingSubjects);
+                    return; // Stop generation and show error
+                }
+                
+                // Check if this specific subject is already assigned to this faculty on this day
+                if (facultyDailySubjects[facultyKey][dayKey].has(course.name)) {
+                    alert(`❌ DUPLICATE ASSIGNMENT!\n\nFaculty "${faculty.name}" is already assigned to "${course.name}" on ${day}.\n\nPlease check your course selections for duplicates.`);
+                    console.error(`Faculty ${faculty.name} already has ${course.name} on ${day}`);
+                    return; // Stop generation and show error
+                }
+                
+                const timetableEntry = {
+                    course: course.name,
+                    faculty: faculty.name,
+                    room: room.name,
+                    day: day,
+                    start_time: period.start,
+                    end_time: period.end,
+                    period: period.period,
+                    start: currentPeriod % classTimings.length,
+                    end: currentPeriod % classTimings.length
+                };
+                
+                console.log('Created timetable entry:', timetableEntry);
+                timetable.push(timetableEntry);
+                
+                // Update tracking
+                facultyDailyAssignments[facultyKey][dayKey]++;
+                facultyDailySubjects[facultyKey][dayKey].add(course.name);
+                
+                console.log(`Faculty ${faculty.name} now has ${facultyDailyAssignments[facultyKey][dayKey]} subjects on ${day}`);
+                
+                currentPeriod++;
+                if (currentPeriod >= classTimings.length) {
+                    currentPeriod = 0;
+                    currentDay++;
+                }
+            });
+            
+            console.log('Final timetable:', timetable);
+            console.log('Faculty daily assignments:', facultyDailyAssignments);
+            
+            if (timetable.length === 0) {
+                alert('No timetable entries could be generated. Please check your data and selections.');
+                return;
+            }
+            
+            // Show constraint summary
+            let constraintSummary = '✅ CONSTRAINT CHECK PASSED!\n\nFaculty Daily Assignment Summary:\n';
+            Object.keys(facultyDailyAssignments).forEach(faculty => {
+                Object.keys(facultyDailyAssignments[faculty]).forEach(day => {
+                    const count = facultyDailyAssignments[faculty][day];
+                    const subjects = Array.from(facultyDailySubjects[faculty][day]);
+                    constraintSummary += `• ${faculty} on ${day}: ${count}/2 subjects (${subjects.join(', ')})\n`;
+                });
+            });
+            
+            displayTimetable(timetable);
+            displayCalendar(timetable);
+            alert(`${constraintSummary}\n\nTimetable generated successfully! ${timetable.length} classes scheduled.`);
+        }
+
+        // Display timetable
+        function displayTimetable(data) {
+            const body = document.getElementById('timetableBody');
+            body.innerHTML = data.map(row => 
+                `<tr>
+                    <td>P${row.period}</td>
+                    <td>${row.course}</td>
+                    <td>${row.faculty}</td>
+                    <td>${row.room}</td>
+                    <td>${row.day}</td>
+                    <td>${row.start_time}</td>
+                    <td>${row.end_time}</td>
+                </tr>`
+            ).join('');
+        }
+
+        // Display calendar
+        function displayCalendar(data) {
+            const calendar = document.getElementById('calendarView');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            const classTimings = [
+                { period: 1, start: '7:10', end: '7:50' },
+                { period: 2, start: '7:50', end: '8:50' },
+                { period: 3, start: '9:20', end: '10:00' },
+                { period: 4, start: '10:10', end: '11:00' },
+                { period: 5, start: '11:10', end: '12:00' },
+                { period: 6, start: '12:10', end: '12:50' }
+            ];
+            
+            // Create grid - transposed view with days as rows and periods as columns
+            let html = '<div class="calendar-cell calendar-header time-slot">Day</div>';
+            classTimings.forEach(timing => {
+                html += `<div class="calendar-cell calendar-header">P${timing.period}<br/>${timing.start}-${timing.end}</div>`;
+            });
+            
+            days.forEach(day => {
+                html += `<div class="calendar-cell time-slot">${day}</div>`;
+                
+                classTimings.forEach(timing => {
+                    const courses = data.filter(c => c.day === day && c.period === timing.period);
+                    let cellContent = '';
+                    courses.forEach(course => {
+                        cellContent += `<div class="course-block">${course.course}<br/>${course.room}</div>`;
+                    });
+                    html += `<div class="calendar-cell">${cellContent}</div>`;
+                });
+            });
+            
+            calendar.innerHTML = html;
+        }
+
+        // Export timetable
+        function exportTimetable(format) {
+            if (timetable.length === 0) {
+                alert('No timetable to export. Generate a timetable first.');
+                return;
+            }
+            
+            if (format === 'csv') {
+                const csvContent = [
+                    'Period,Course,Faculty,Room,Day,Start Time,End Time',
+                    ...timetable.map(row => `P${row.period},${row.course},${row.faculty},${row.room},${row.day},${row.start_time},${row.end_time}`)
+                ].join('\n');
+                
+                const blob = new Blob([csvContent], {type: 'text/csv'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'timetable.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+            } else if (format === 'excel') {
+                // Create Excel workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Prepare data for Excel
+                const excelData = [
+                    ['Period', 'Course', 'Faculty', 'Room', 'Day', 'Start Time', 'End Time'],
+                    ...timetable.map(row => [
+                        `P${row.period}`,
+                        row.course,
+                        row.faculty,
+                        row.room,
+                        row.day,
+                        row.start_time,
+                        row.end_time
+                    ])
+                ];
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(excelData);
+                
+                // Set column widths
+                ws['!cols'] = [
+                    { width: 10 }, // Period
+                    { width: 25 }, // Course
+                    { width: 25 }, // Faculty
+                    { width: 15 }, // Room
+                    { width: 10 }, // Day
+                    { width: 12 }, // Start Time
+                    { width: 12 }  // End Time
+                ];
+                
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'Timetable');
+                
+                // Create calendar view sheet
+                const calendarData = createCalendarExcelData();
+                const calendarWs = XLSX.utils.aoa_to_sheet(calendarData);
+                calendarWs['!cols'] = [
+                    { width: 12 }, // Day column
+                    ...Array(6).fill({ width: 20 }) // Period columns
+                ];
+                XLSX.utils.book_append_sheet(wb, calendarWs, 'Calendar View');
+                
+                // Save file
+                XLSX.writeFile(wb, 'timetable.xlsx');
+            } else if (format === 'json') {
+                const blob = new Blob([JSON.stringify(timetable, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'timetable.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Create calendar data for Excel export
+        function createCalendarExcelData() {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            const classTimings = [
+                { period: 1, start: '7:10', end: '7:50' },
+                { period: 2, start: '7:50', end: '8:50' },
+                { period: 3, start: '9:20', end: '10:00' },
+                { period: 4, start: '10:10', end: '11:00' },
+                { period: 5, start: '11:10', end: '12:00' },
+                { period: 6, start: '12:10', end: '12:50' }
+            ];
+            
+            // Create header row
+            const headerRow = ['Day', ...classTimings.map(timing => `P${timing.period} (${timing.start}-${timing.end})`)];
+            const data = [headerRow];
+            
+            // Create data rows
+            days.forEach(day => {
+                const row = [day];
+                classTimings.forEach(timing => {
+                    const courses = timetable.filter(c => c.day === day && c.period === timing.period);
+                    if (courses.length > 0) {
+                        const courseInfo = courses.map(c => `${c.course}\n${c.faculty}\n${c.room}`).join('\n\n');
+                        row.push(courseInfo);
+                    } else {
+                        row.push('');
+                    }
+                });
+                data.push(row);
+            });
+            
+            return data;
+        }
+
+        // Export data
+        function exportData(type) {
+            const data = currentData[type];
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${type}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Add row
+        function addRow(type) {
+            const newRow = {...sampleData[type][0]};
+            if (type === 'students') {
+                newRow.id = Math.max(...currentData[type].map(s => s.id), 0) + 1;
+                newRow.name = 'New Student';
+            } else if (type === 'faculty') {
+                newRow.id = Math.max(...currentData[type].map(f => f.id), 0) + 1;
+                newRow.name = 'New Faculty';
+            } else if (type === 'courses') {
+                newRow.code = `NEW${Math.max(...currentData[type].map(c => parseInt(c.code.replace(/\D/g, '')) || 0), 0) + 1}`;
+                newRow.name = 'New Course';
+            } else if (type === 'rooms') {
+                newRow.id = Math.max(...currentData[type].map(r => r.id), 0) + 1;
+                newRow.name = 'New Room';
+            }
+            
+            currentData[type].push(newRow);
+            displayData(type, currentData[type]);
+            if (type === 'students' || type === 'courses' || type === 'faculty') {
+                updateSelectors();
+            }
+        }
+
+        // Remove row
+        function removeRow(type) {
+            const table = document.getElementById(`${type}Table`);
+            const selectedRow = table.querySelector('tr.selected');
+            
+            if (!selectedRow) {
+                alert('Please select a row to remove');
+                return;
+            }
+            
+            const rowIndex = Array.from(table.querySelectorAll('tbody tr')).indexOf(selectedRow);
+            currentData[type].splice(rowIndex, 1);
+            displayData(type, currentData[type]);
+            if (type === 'students' || type === 'courses' || type === 'faculty') {
+                updateSelectors();
+            }
+        }
+    </script>
+</body>
+</html>

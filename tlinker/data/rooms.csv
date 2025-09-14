@@ -1,0 +1,9 @@
+id,name,capacity,type,availability
+1,Lecture Hall A,100,Lecture Hall,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+2,Lecture Hall B,80,Lecture Hall,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+3,Computer Lab 1,30,Computer Lab,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+4,Computer Lab 2,30,Computer Lab,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+5,Physics Lab,25,Physics Lab,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+6,Electronics Lab,20,Electronics Lab,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+7,Classroom 101,40,Classroom,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
+8,Classroom 102,40,Classroom,"[""Mon:1-16"", ""Tue:1-16"", ""Wed:1-16"", ""Thu:1-16"", ""Fri:1-16""]"
