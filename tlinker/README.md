@@ -1,4 +1,4 @@
-# Vicharak - NEP-2020 Timetable Generator
+# Vicharak - An Artificial Inteliigent Model for Timetable Generation
 
 A Python-based timetable generator that implements NEP-2020-aligned scheduling using OR-Tools CP-SAT solver. The application provides a comprehensive desktop interface for managing students, faculty, courses, and resources, with automated timetable generation capabilities.
 
@@ -276,3 +276,4 @@ For issues and questions:
 - **Multi-semester Planning**: Support for full academic year planning
 - **Real-time Updates**: Live updates when data changes
 - **Mobile App**: Companion mobile application for students and faculty
+
