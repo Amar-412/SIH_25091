@@ -7,7 +7,7 @@ A Python-based timetable generator that implements NEP-2020-aligned scheduling u
 - **Five-tab Interface**: Students, Faculty, Courses, Resources, and Generate Timetable
 - **Data Management**: Load/save CSV/JSON files with full CRUD operations
 - **OR-Tools Integration**: Advanced constraint programming for optimal scheduling
-- **NEP-2020 Compliance**: Aligned with National Education Policy 2020 requirements
+- **NEP-2020 Compliance**: Aligned with National Education Policy 2020 India requirements
 - **Multiple Export Formats**: CSV and Excel export capabilities
 - **Calendar View**: Visual timetable display with weekly grid
 - **Flexible Constraints**: Configurable time slots, room assignments, and faculty availability
@@ -276,5 +276,6 @@ For issues and questions:
 - **Multi-semester Planning**: Support for full academic year planning
 - **Real-time Updates**: Live updates when data changes
 - **Mobile App**: Companion mobile application for students and faculty
+
 
 
